@@ -1,0 +1,3 @@
+[submodule "3pp/flic"]
+	path = 3pp/flic
+	url = https://github.com/Risca/flic
