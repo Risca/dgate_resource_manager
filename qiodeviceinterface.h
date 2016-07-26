@@ -1,16 +1,16 @@
-#ifndef QFILEINTERFACE_H
-#define QFILEINTERFACE_H
+#ifndef QIODEVICEINTERFACE_H
+#define QIODEVICEINTERFACE_H
 
 #include <flic/flic.h>
 
-class QFile;
+class QIODevice;
 
 namespace flic {
 
-class QFileInterface : public FileInterface
+class QIODeviceInterface : public FileInterface
 {
 public:
-    QFileInterface(QFile &file);
+    QIODeviceInterface(QIODevice &device);
 
     // Returns true if we can read/write bytes from/into the file
     bool ok() const;
@@ -28,10 +28,10 @@ public:
     void write8(uint8_t value);
 
 private:
-    QFile &m_File;
+    QIODevice &m_Dev;
     bool m_Ok;
 };
 
 }
 
-#endif // QFILEINTERFACE_H
+#endif // QIODEVICEINTERFACE_H

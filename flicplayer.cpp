@@ -1,5 +1,7 @@
 #include "flicplayer.h"
 
+#include "qiodeviceinterface.h"
+
 #include <QDebug>
 #include <QFile>
 #include <QImage>
@@ -33,7 +35,7 @@ void FlicPlayer::play(const QString &filename)
         delete m_FileInterface;
         m_FileInterface = 0;
     }
-    m_FileInterface = new flic::QFileInterface(m_File);
+    m_FileInterface = new flic::QIODeviceInterface(m_File);
 
     if (m_FlicDecoder) {
         delete m_FlicDecoder;
@@ -88,6 +90,7 @@ void FlicPlayer::processNextFrame()
             m_FileInterface = 0;
             m_File.close();
             m_Pixels.clear();
+            emit finished();
         }
         else {
             QTimer::singleShot(m_Header.speed, this, SLOT(processNextFrame()));

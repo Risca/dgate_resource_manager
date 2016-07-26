@@ -1,8 +1,6 @@
 #ifndef FLICPLAYER_H
 #define FLICPLAYER_H
 
-#include "qfileinterface.h"
-
 #include <flic/flic.h>
 
 #include <QFile>
@@ -13,6 +11,10 @@
 
 class QImage;
 class QString;
+
+namespace flic {
+class QIODeviceInterface;
+}
 
 class FlicPlayer : public QObject
 {
@@ -26,6 +28,7 @@ public slots:
 
 signals:
     void frameReady(const QImage &frame);
+    void finished();
 
 private:
     flic::Decoder *m_FlicDecoder;
@@ -34,7 +37,7 @@ private:
     int m_FrameCount;
     QVector<uint8_t> m_Pixels;
     QFile m_File;
-    flic::QFileInterface *m_FileInterface;
+    flic::QIODeviceInterface *m_FileInterface;
 
 private slots:
     void processNextFrame();
