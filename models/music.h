@@ -14,7 +14,7 @@ class Music : public QAbstractListModel
     Q_OBJECT;
 
 public:
-    Music(QObject* parent = 0);
+    explicit Music(QObject* parent = 0);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;

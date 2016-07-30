@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     flicplayer.cpp \
     qiodeviceinterface.cpp \
     models/video.cpp \
-    models/music.cpp
+    models/music.cpp \
+    models/voice.cpp
 
 HEADERS  += mainwindow.h \
     flicplayer.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     videosurface.h \
     qiodeviceinterface.h \
     models/video.h \
-    models/music.h
+    models/music.h \
+    models/voice.h
 
 FORMS    += mainwindow.ui
 

@@ -1,21 +1,20 @@
-#ifndef VIDEO_H
-#define VIDEO_H
+#ifndef VOICE_H
+#define VOICE_H
 
 #include <QAbstractListModel>
-#include <QDir>
+#include <QList>
 #include <QObject>
-#include <QSet>
-#include <QString>
-#include <QStringList>
+
+class QDataStream;
 
 namespace model {
 
-class Video : public QAbstractListModel
+class Voice : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    explicit Video(QObject *parent = 0);
+    explicit Voice(QObject *parent = 0);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -25,11 +24,16 @@ public slots:
     void processDirectory(const QString &dir);
 
 private:
-    QDir m_Dir;
-    QStringList m_Videos;
-    static const QSet<QString> g_KnownVideoFiles;
+    struct TrackInfo {
+        quint32 offset;
+        qint32 size;
+    };
+
+    QList<TrackInfo> m_Tracks;
+
+    void parse(QDataStream &stream);
 };
 
 } // namespace model
 
-#endif // VIDEO_H
+#endif // VOICE_H
