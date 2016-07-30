@@ -12,6 +12,7 @@ class QSettings;
 
 namespace model {
 class Video;
+class Music;
 }
 
 namespace Ui {
@@ -39,6 +40,7 @@ private:
     FlicPlayer m_Player;
 
     model::Video* m_VideoModel;
+    model::Music* m_MusicModel;
 };
 
 #endif // MAINWINDOW_H
