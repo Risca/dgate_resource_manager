@@ -10,6 +10,7 @@
 #include <inttypes.h>
 
 class QImage;
+class QModelIndex;
 class QString;
 
 namespace flic {
@@ -25,6 +26,7 @@ public:
 
 public slots:
     void play(const QString &filename);
+    void play(const QModelIndex &index);
 
 signals:
     void frameReady(const QImage &frame);

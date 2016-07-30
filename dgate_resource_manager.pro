@@ -17,13 +17,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     videosurface.cpp \
     flicplayer.cpp \
-    qiodeviceinterface.cpp
+    qiodeviceinterface.cpp \
+    models/video.cpp
 
 HEADERS  += mainwindow.h \
     flicplayer.h \
     sleeper.h \
     videosurface.h \
-    qiodeviceinterface.h
+    qiodeviceinterface.h \
+    models/video.h
 
 FORMS    += mainwindow.ui
 

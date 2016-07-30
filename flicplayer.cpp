@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QImage>
+#include <QModelIndex>
 #include <QRgb>
 #include <QTimer>
 #include <QVector>
@@ -62,9 +63,22 @@ void FlicPlayer::play(const QString &filename)
     }
 }
 
+void FlicPlayer::play(const QModelIndex &index)
+{
+    if (!index.isValid()) {
+        return;
+    }
+
+    QString file = index.data(Qt::UserRole).toString();
+    if (file.isEmpty()) {
+        return;
+    }
+
+    play(file);
+}
+
 void FlicPlayer::processNextFrame()
 {
-    qDebug() << "processNextFrame()";
     if (m_FlicDecoder) {
         if (!m_FlicDecoder->readFrame(m_Frame)) {
             qWarning() << "failed to read frame";
@@ -83,7 +97,6 @@ void FlicPlayer::processNextFrame()
 
         m_FrameCount++;
         if (m_FrameCount >= m_Header.frames) {
-            qDebug() << "Processed the last frame";
             delete m_FlicDecoder;
             m_FlicDecoder = 0;
             delete m_FileInterface;
