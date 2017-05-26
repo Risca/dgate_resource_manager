@@ -29,6 +29,9 @@ QVariant Music::data(const QModelIndex &index, int role) const
         return QString::number(row + 1);
         break;
 
+    case Qt::UserRole:
+        return QVariant::fromValue<model::Music::TrackInfo>(m_Tracks[row]);
+
     default:
         break;
     }
@@ -57,10 +60,10 @@ void Music::processDirectory(const QString &dir)
     }
 
     QDataStream fileStream(&file);
-    parse(fileStream);
+    parse(fileStream, file.fileName());
 }
 
-void Music::parse(QDataStream &stream)
+void Music::parse(QDataStream &stream, const QString &filePath)
 {
     quint16 nTracks;
 
@@ -69,7 +72,7 @@ void Music::parse(QDataStream &stream)
 
     m_Tracks.clear();
     for (int t = 0; t < nTracks; ++t) {
-        TrackInfo track;
+        TrackInfo track = { filePath, 0, 0 };
         stream >> track.offset >> track.size;
         if (!track.size) {
             // last track is supposed to have zero size

@@ -10,7 +10,10 @@
 #include <QTimer>
 #include <QVector>
 
-FlicPlayer::FlicPlayer() : m_FlicDecoder(0), m_FileInterface(0)
+FlicPlayer::FlicPlayer(QObject *parent) :
+    QObject(parent),
+    m_FlicDecoder(0),
+    m_FileInterface(0)
 {
 }
 

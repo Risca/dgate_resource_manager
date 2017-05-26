@@ -25,12 +25,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->voiceListView->setModel(m_VoiceModel);
 
     connect(this, SIGNAL(directoryOpened(QString)), this, SLOT(setWindowTitle(QString)));
-    connect(ui->videoListView, SIGNAL(doubleClicked(QModelIndex)), &m_Player, SLOT(play(QModelIndex)));
-    connect(&m_Player, SIGNAL(frameReady(QImage)), ui->widget, SLOT(present(QImage)));
+    connect(ui->videoListView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));
+    connect(&m_FlicPlayer, SIGNAL(frameReady(QImage)), ui->widget, SLOT(present(QImage)));
     connect(ui->actionOpen_folder, SIGNAL(triggered(bool)), this, SLOT(openDir()));
     connect(this, SIGNAL(directoryOpened(QString)), m_VideoModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_MusicModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_VoiceModel, SLOT(processDirectory(QString)));
+
+    connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(play(QModelIndex)));
 
     emit directoryOpened(m_LastDir);
 }

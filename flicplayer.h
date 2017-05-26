@@ -21,7 +21,7 @@ class FlicPlayer : public QObject
 {
     Q_OBJECT
 public:
-    FlicPlayer();
+    FlicPlayer(QObject *parent = 0);
     ~FlicPlayer();
 
 public slots:

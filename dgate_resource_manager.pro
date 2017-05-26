@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     qiodeviceinterface.cpp \
     models/video.cpp \
     models/music.cpp \
-    models/voice.cpp
+    models/voice.cpp \
+    xmiplayer.cpp
 
 HEADERS  += mainwindow.h \
     flicplayer.h \
@@ -29,7 +30,8 @@ HEADERS  += mainwindow.h \
     qiodeviceinterface.h \
     models/video.h \
     models/music.h \
-    models/voice.h
+    models/voice.h \
+    xmiplayer.h
 
 FORMS    += mainwindow.ui
 
@@ -42,3 +44,5 @@ INCLUDEPATH += $$PWD/3pp
 DEPENDPATH += $$PWD/3pp
 
 unix:!macx: PRE_TARGETDEPS += $$PWD/3pp/flic/libflic-lib.a
+
+unix:!macx: LIBS += -lWildMidi

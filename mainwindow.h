@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <flicplayer.h>
+#include "xmiplayer.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -38,7 +39,8 @@ private:
     Ui::MainWindow *ui;
     QSettings *m_Settings;
     QString m_LastDir;
-    FlicPlayer m_Player;
+    FlicPlayer m_FlicPlayer;
+    XmiPlayer m_XmiPlayer;
 
     model::Video* m_VideoModel;
     model::Music* m_MusicModel;
