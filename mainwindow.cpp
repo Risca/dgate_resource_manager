@@ -33,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(directoryOpened(QString)), m_VoiceModel, SLOT(processDirectory(QString)));
 
     connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(play(QModelIndex)));
+    connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_WavePlayer, SLOT(stop()));
+    connect(ui->voiceListView, SIGNAL(doubleClicked(QModelIndex)), &m_WavePlayer, SLOT(play(QModelIndex)));
+    connect(ui->voiceListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(stop()));
 
     emit directoryOpened(m_LastDir);
 }

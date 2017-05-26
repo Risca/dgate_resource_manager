@@ -3,6 +3,7 @@
 
 #include <flicplayer.h>
 #include "xmiplayer.h"
+#include "waveplayer.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -41,6 +42,7 @@ private:
     QString m_LastDir;
     FlicPlayer m_FlicPlayer;
     XmiPlayer m_XmiPlayer;
+    WavePlayer m_WavePlayer;
 
     model::Video* m_VideoModel;
     model::Music* m_MusicModel;
