@@ -2,63 +2,11 @@
 
 #include <QDataStream>
 #include <QDebug>
-#include <QFile>
 
 namespace model {
 
-Voice::Voice(QObject *parent) : QAbstractListModel(parent)
+Voice::Voice(QObject *parent) : AbstractAudioModel("DGATE001.VOC", parent)
 {
-}
-
-int Voice::rowCount(const QModelIndex &) const
-{
-    return m_Tracks.count();
-}
-
-QVariant Voice::data(const QModelIndex &index, int role) const
-{
-    int row = index.row();
-    if (row >= rowCount()) {
-        return QVariant();
-    }
-
-    switch (role) {
-    case Qt::DisplayRole:
-        return QString::number(row + 1);
-        break;
-
-    case Qt::UserRole:
-        return QVariant::fromValue<TrackInfo>(m_Tracks[row]);
-
-    default:
-        break;
-    }
-    return QVariant();
-}
-
-QVariant Voice::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role == Qt::DisplayRole) {
-        if (orientation == Qt::Horizontal && section == 0) {
-            return "Track name";
-        }
-        if (orientation == Qt::Vertical && section < rowCount()) {
-            return QString::number(section + 1);
-        }
-    }
-
-    return QVariant();
-}
-
-void Voice::processDirectory(const QString &dir)
-{
-    QFile file(dir + "/DGATE001.VOC");
-    if (!file.open(QFile::ReadOnly)) {
-        return;
-    }
-
-    QDataStream fileStream(&file);
-    parse(fileStream, file.fileName());
 }
 
 void Voice::parse(QDataStream &stream, const QString &filePath)
@@ -93,9 +41,6 @@ void Voice::parse(QDataStream &stream, const QString &filePath)
         }
         offset = nextOffset;
     }
-
-    emit dataChanged(createIndex(0, 0),
-                     createIndex(rowCount() - 1, 0));
 }
 
 } // namespace model
