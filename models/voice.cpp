@@ -27,6 +27,9 @@ QVariant Voice::data(const QModelIndex &index, int role) const
         return QString::number(row + 1);
         break;
 
+    case Qt::UserRole:
+        return QVariant::fromValue<TrackInfo>(m_Tracks[row]);
+
     default:
         break;
     }
@@ -55,10 +58,10 @@ void Voice::processDirectory(const QString &dir)
     }
 
     QDataStream fileStream(&file);
-    parse(fileStream);
+    parse(fileStream, file.fileName());
 }
 
-void Voice::parse(QDataStream &stream)
+void Voice::parse(QDataStream &stream, const QString &filePath)
 {
     quint16 nTracks;
 
@@ -76,6 +79,7 @@ void Voice::parse(QDataStream &stream)
         track.offset = offset;
         track.size = nextOffset - offset;
         if (track.size > 0) {
+            track.filePath = filePath;
             m_Tracks.append(track);
         }
         else if (track.size == 0) {

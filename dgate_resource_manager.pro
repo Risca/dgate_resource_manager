@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     models/video.cpp \
     models/music.cpp \
     models/voice.cpp \
-    xmiplayer.cpp
+    xmiplayer.cpp \
+    waveplayer.cpp
 
 HEADERS  += mainwindow.h \
     flicplayer.h \
@@ -31,7 +32,9 @@ HEADERS  += mainwindow.h \
     models/video.h \
     models/music.h \
     models/voice.h \
-    xmiplayer.h
+    xmiplayer.h \
+    waveplayer.h \
+    models/trackinfo.h
 
 FORMS    += mainwindow.ui
 

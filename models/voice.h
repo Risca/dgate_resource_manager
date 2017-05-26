@@ -1,6 +1,8 @@
 #ifndef VOICE_H
 #define VOICE_H
 
+#include "trackinfo.h"
+
 #include <QAbstractListModel>
 #include <QList>
 #include <QObject>
@@ -24,14 +26,9 @@ public slots:
     void processDirectory(const QString &dir);
 
 private:
-    struct TrackInfo {
-        quint32 offset;
-        qint32 size;
-    };
-
     QList<TrackInfo> m_Tracks;
 
-    void parse(QDataStream &stream);
+    void parse(QDataStream &stream, const QString &filePath);
 };
 
 } // namespace model
