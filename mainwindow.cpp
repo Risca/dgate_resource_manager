@@ -31,19 +31,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->textListView->setModel(m_TextModel);
 
     connect(this, SIGNAL(directoryOpened(QString)), this, SLOT(setWindowTitle(QString)));
-    connect(ui->videoListView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));
-    connect(&m_FlicPlayer, SIGNAL(frameReady(QImage)), ui->widget, SLOT(present(QImage)));
     connect(ui->actionOpen_folder, SIGNAL(triggered(bool)), this, SLOT(openDir()));
+    connect(&m_FlicPlayer, SIGNAL(frameReady(QImage)), ui->widget, SLOT(present(QImage)));
+    connect(&m_PicRender, SIGNAL(frameReady(QImage)), ui->widget, SLOT(present(QImage)));
+
     connect(this, SIGNAL(directoryOpened(QString)), m_ImageModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_VideoModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_MusicModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_VoiceModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_TextModel, SLOT(processDirectory(QString)));
 
+    connect(ui->imageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_PicRender, SLOT(play(QModelIndex)));
+    connect(ui->videoListView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));
     connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(play(QModelIndex)));
     connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_WavePlayer, SLOT(stop()));
     connect(ui->voiceListView, SIGNAL(doubleClicked(QModelIndex)), &m_WavePlayer, SLOT(play(QModelIndex)));
     connect(ui->voiceListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(stop()));
+
 
     emit directoryOpened(m_LastDir);
 }

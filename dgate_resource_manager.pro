@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     models/abstractaudiomodel.cpp \
     models/text.cpp \
     models/image.cpp \
-    models/treeitem.cpp
+    models/treeitem.cpp \
+    players/picturerender.cpp
 
 HEADERS  += mainwindow.h \
     videosurface.h \
@@ -42,7 +43,8 @@ HEADERS  += mainwindow.h \
     models/abstractaudiomodel.h \
     models/text.h \
     models/image.h \
-    models/treeitem.h
+    models/treeitem.h \
+    players/picturerender.h
 
 FORMS    += mainwindow.ui
 

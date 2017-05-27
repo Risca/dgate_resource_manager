@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "players/picturerender.h"
 #include "players/flicplayer.h"
 #include "players/xmiplayer.h"
 #include "players/waveplayer.h"
@@ -42,6 +43,7 @@ private:
     Ui::MainWindow *ui;
     QSettings *m_Settings;
     QString m_LastDir;
+    PictureRender m_PicRender;
     FlicPlayer m_FlicPlayer;
     XmiPlayer m_XmiPlayer;
     WavePlayer m_WavePlayer;
