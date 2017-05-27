@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#include <inttypes.h>
+
 namespace {
 /*
  * Code for extracting text from Death gate was taken from
