@@ -20,12 +20,17 @@ public:
     enum {
         COLUMN_OFFSET,
         COLUMN_IMG_OFF,
-        COLUMN_TYPE,
+        COLUMN_FLAGS,
         COLUMN_WIDTH,
         COLUMN_HEIGHT,
         COLUMN_PALETTE,
 
         COLUMN_END
+    };
+
+    enum Flags {
+        FlagCoordinates = (1 << 0),
+        FlagPalette     = (1 << 12)
     };
 
     // Header:

@@ -7,15 +7,6 @@
 #include <QFile>
 #include <QStringList>
 
-#define DG_ClosedBook           0x0300 // No header
-#define DG_SpellAnimation       0x0301 // 4 byte header
-#define DG_NavigationAndItems   0x0500 // No header
-#define DG_Animation            0x0501 // 4 byte header
-#define DG_NoteOrOpenBook       0x1300 // 3*256 palette header
-#define DG_BookAnimation        0x1301 // 4 byte (coordinates?)+ 3*256 palette header
-#define DG_BigImage             0x1500 // 3*256 palette header
-#define DG_BigAnimation         0x4501 // 4 byte header (coordinates?)
-
 namespace model {
 
 const QSet<QString> Image::g_KnownImageFiles = QSet<QString>()
@@ -87,7 +78,7 @@ Image::Image(QObject *parent)
     TreeItem::ItemData headers;
     headers[COLUMN_OFFSET] = "Offset";
     headers[COLUMN_IMG_OFF] = "Image offset";
-    headers[COLUMN_TYPE] = "Type";
+    headers[COLUMN_FLAGS] = "Flags";
     headers[COLUMN_WIDTH] = "Width";
     headers[COLUMN_HEIGHT] = "Height";
     headers[COLUMN_PALETTE] = "Palette";
@@ -227,51 +218,33 @@ void Image::processDirectory(const QString &dir)
 void Image::parse(QDataStream &stream, TreeItem *parent)
 {
     quint32 offset;
-    quint16 tmp;
-    quint16 width, height;
 
     stream.setByteOrder(QDataStream::LittleEndian);
     stream >> offset;
     while (offset != 0 && !stream.atEnd()) {
-        stream >> tmp; // type
-        stream >> width >> height;
-        bool containsPalette = false;
+        quint16 flags, width, height;
         qint32 imageOffset = 0;
-        switch (tmp) {
-        case DG_SpellAnimation:
-        case DG_Animation:
-        case DG_BigAnimation:
-            // 4 byte header
-            imageOffset = 4;
-            break;
 
-        case DG_BookAnimation:
-            containsPalette = true;
-            imageOffset = 3*256+4;
-            break;
-        case DG_NoteOrOpenBook:
-        case DG_BigImage:
-            containsPalette = true;
-            imageOffset = 3*256;
-            break;
-        case DG_ClosedBook:
-        case DG_NavigationAndItems:
-        default:
-            break;
+        stream >> flags >> width >> height;
+        if (flags & FlagCoordinates) {
+            imageOffset += 4;
+        }
+        if (flags & FlagPalette) {
+            imageOffset += 3 * 256;
         }
 
         TreeItem::ItemData itemData;
         itemData[COLUMN_OFFSET] = offset;
         itemData[COLUMN_IMG_OFF] = imageOffset;
-        itemData[COLUMN_TYPE] = tmp;
+        itemData[COLUMN_FLAGS] = flags;
         itemData[COLUMN_WIDTH] = width;
         itemData[COLUMN_HEIGHT] = height;
-        itemData[COLUMN_PALETTE] = containsPalette;
+        itemData[COLUMN_PALETTE] = !!(flags & FlagPalette);
 
         parent->appendChild(new TreeItem(itemData, parent));
 
         // Align to next offset
-        stream >> tmp;
+        stream >> flags;
         stream >> offset;
     }
 }
