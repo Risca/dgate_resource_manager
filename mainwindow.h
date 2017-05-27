@@ -1,9 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <flicplayer.h>
-#include "xmiplayer.h"
-#include "waveplayer.h"
+#include "players/flicplayer.h"
+#include "players/xmiplayer.h"
+#include "players/waveplayer.h"
 
 #include <QMainWindow>
 #include <QString>

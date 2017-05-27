@@ -16,26 +16,26 @@ INCLUDEPATH += 3pp
 SOURCES += main.cpp\
         mainwindow.cpp \
     videosurface.cpp \
-    flicplayer.cpp \
-    qiodeviceinterface.cpp \
+    players/flicplayer.cpp \
+    players/qiodeviceinterface.cpp \
     models/video.cpp \
     models/music.cpp \
     models/voice.cpp \
-    xmiplayer.cpp \
-    waveplayer.cpp \
+    players/xmiplayer.cpp \
+    players/waveplayer.cpp \
     models/abstractaudiomodel.cpp \
     models/text.cpp
 
 HEADERS  += mainwindow.h \
-    flicplayer.h \
-    sleeper.h \
     videosurface.h \
-    qiodeviceinterface.h \
+    players/flicplayer.h \
+    players/qiodeviceinterface.h \
+    sleeper.h \
     models/video.h \
     models/music.h \
     models/voice.h \
-    xmiplayer.h \
-    waveplayer.h \
+    players/xmiplayer.h \
+    players/waveplayer.h \
     models/trackinfo.h \
     models/abstractaudiomodel.h \
     models/text.h
