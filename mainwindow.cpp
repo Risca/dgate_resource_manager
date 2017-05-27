@@ -7,6 +7,8 @@
 #include "models/voice.h"
 #include "models/text.h"
 
+#include "hexnumberdelegate.h"
+
 #include <QDebug>
 #include <QFileDialog>
 #include <QSettings>
@@ -29,6 +31,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->musicListView->setModel(m_MusicModel);
     ui->voiceListView->setModel(m_VoiceModel);
     ui->textListView->setModel(m_TextModel);
+
+    ui->imageTreeView->setItemDelegateForColumn(model::Image::COLUMN_OFFSET,
+                                                new HexNumberDelegate(this));
+    ui->imageTreeView->setItemDelegateForColumn(model::Image::COLUMN_IMG_OFF,
+                                                new HexNumberDelegate(this));
+    ui->imageTreeView->setItemDelegateForColumn(model::Image::COLUMN_FLAGS,
+                                                new HexNumberDelegate(this));
 
     connect(this, SIGNAL(directoryOpened(QString)), this, SLOT(setWindowTitle(QString)));
     connect(ui->actionOpen_folder, SIGNAL(triggered(bool)), this, SLOT(openDir()));

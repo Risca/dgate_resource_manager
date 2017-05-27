@@ -44,7 +44,8 @@ HEADERS  += mainwindow.h \
     models/text.h \
     models/image.h \
     models/treeitem.h \
-    players/picturerender.h
+    players/picturerender.h \
+    hexnumberdelegate.h
 
 FORMS    += mainwindow.ui
 
