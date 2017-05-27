@@ -57,8 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->voiceListView, SIGNAL(doubleClicked(QModelIndex)), &m_WavePlayer, SLOT(play(QModelIndex)));
     connect(ui->voiceListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(stop()));
 
-
-    emit directoryOpened(m_LastDir);
+    if (!m_LastDir.isEmpty()) {
+        emit directoryOpened(m_LastDir);
+    }
 }
 
 MainWindow::~MainWindow()
