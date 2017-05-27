@@ -16,6 +16,7 @@ namespace model {
 class Video;
 class Music;
 class Voice;
+class Text;
 }
 
 namespace Ui {
@@ -47,6 +48,7 @@ private:
     model::Video* m_VideoModel;
     model::Music* m_MusicModel;
     model::Voice* m_VoiceModel;
+    model::Text* m_TextModel;
 };
 
 #endif // MAINWINDOW_H
