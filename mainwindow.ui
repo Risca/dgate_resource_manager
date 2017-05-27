@@ -21,12 +21,17 @@
     <item row="0" column="1">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="image">
        <attribute name="title">
         <string>Image</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QTreeView" name="imageTreeView"/>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="video">
        <attribute name="title">

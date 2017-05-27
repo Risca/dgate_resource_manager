@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     players/xmiplayer.cpp \
     players/waveplayer.cpp \
     models/abstractaudiomodel.cpp \
-    models/text.cpp
+    models/text.cpp \
+    models/image.cpp \
+    models/treeitem.cpp
 
 HEADERS  += mainwindow.h \
     videosurface.h \
@@ -38,7 +40,9 @@ HEADERS  += mainwindow.h \
     players/waveplayer.h \
     models/trackinfo.h \
     models/abstractaudiomodel.h \
-    models/text.h
+    models/text.h \
+    models/image.h \
+    models/treeitem.h
 
 FORMS    += mainwindow.ui
 

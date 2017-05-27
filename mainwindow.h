@@ -13,6 +13,7 @@ class QModelIndex;
 class QSettings;
 
 namespace model {
+class Image;
 class Video;
 class Music;
 class Voice;
@@ -45,6 +46,7 @@ private:
     XmiPlayer m_XmiPlayer;
     WavePlayer m_WavePlayer;
 
+    model::Image* m_ImageModel;
     model::Video* m_VideoModel;
     model::Music* m_MusicModel;
     model::Voice* m_VoiceModel;

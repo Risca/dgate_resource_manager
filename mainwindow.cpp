@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "models/image.h"
 #include "models/music.h"
 #include "models/video.h"
 #include "models/voice.h"
@@ -15,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     m_Settings(new QSettings("--secret--", "dgate resource manager", this)),
     m_LastDir(m_Settings->value("lastdir", QDir::homePath()).toString()),
+    m_ImageModel(new model::Image(this)),
     m_VideoModel(new model::Video(this)),
     m_MusicModel(new model::Music(this)),
     m_VoiceModel(new model::Voice(this)),
@@ -22,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->imageTreeView->setModel(m_ImageModel);
     ui->videoListView->setModel(m_VideoModel);
     ui->musicListView->setModel(m_MusicModel);
     ui->voiceListView->setModel(m_VoiceModel);
@@ -31,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->videoListView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));
     connect(&m_FlicPlayer, SIGNAL(frameReady(QImage)), ui->widget, SLOT(present(QImage)));
     connect(ui->actionOpen_folder, SIGNAL(triggered(bool)), this, SLOT(openDir()));
+    connect(this, SIGNAL(directoryOpened(QString)), m_ImageModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_VideoModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_MusicModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_VoiceModel, SLOT(processDirectory(QString)));
