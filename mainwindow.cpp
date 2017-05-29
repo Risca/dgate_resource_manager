@@ -11,6 +11,7 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <QHeaderView>
 #include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -27,10 +28,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     ui->imageTreeView->setModel(m_ImageModel);
+    ui->overlayImageTreeView->setModel(m_ImageModel);
     ui->videoListView->setModel(m_VideoModel);
     ui->musicListView->setModel(m_MusicModel);
     ui->voiceListView->setModel(m_VoiceModel);
     ui->textListView->setModel(m_TextModel);
+
+    ui->imageTreeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->overlayImageTreeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 
     ui->imageTreeView->setItemDelegateForColumn(model::Image::COLUMN_OFFSET,
                                                 new HexNumberDelegate(this));
@@ -50,7 +55,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(directoryOpened(QString)), m_VoiceModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_TextModel, SLOT(processDirectory(QString)));
 
-    connect(ui->imageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_PicRender, SLOT(play(QModelIndex)));
+    connect(ui->imageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_PicRender, SLOT(render(QModelIndex)));
+    connect(ui->overlayImageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_PicRender, SLOT(overlay(QModelIndex)));
+    connect(ui->overlayEnableCheckBox, SIGNAL(clicked(bool)), &m_PicRender, SLOT(enableOverlay(bool)));
     connect(ui->videoListView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));
     connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(play(QModelIndex)));
     connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_WavePlayer, SLOT(stop()));

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>614</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,14 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="VideoSurface" name="widget" native="true"/>
+     <widget class="VideoSurface" name="widget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>640</width>
+        <height>480</height>
+       </size>
+      </property>
+     </widget>
     </item>
     <item row="0" column="1">
      <widget class="QTabWidget" name="tabWidget">
@@ -29,7 +36,52 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QTreeView" name="imageTreeView"/>
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Main image</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTreeView" name="imageTreeView"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_2">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <widget class="QCheckBox" name="overlayEnableCheckBox">
+             <property name="text">
+              <string>Overlay image</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTreeView" name="overlayImageTreeView">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -82,7 +134,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>614</width>
      <height>19</height>
     </rect>
    </property>
@@ -146,6 +198,22 @@
     <hint type="destinationlabel">
      <x>199</x>
      <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>overlayEnableCheckBox</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>overlayImageTreeView</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>469</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>469</x>
+     <y>373</y>
     </hint>
    </hints>
   </connection>
