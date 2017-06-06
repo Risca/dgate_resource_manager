@@ -247,13 +247,19 @@ void PictureRender::overlay(const QModelIndex &index)
     p.setCompositionMode(QPainter::CompositionMode_SourceOver);
     p.drawImage(x, y, overlay);
     p.end();
-    emit frameReady(surface);
+    m_OverlayedImage = surface;
+    emit frameReady(m_OverlayedImage);
 }
 
 void PictureRender::enableOverlay(bool enable)
 {
     m_OverlayEnabled = enable;
-    if (!enable) {
+    if (enable) {
+        if (!m_OverlayedImage.isNull()) {
+            emit frameReady(m_OverlayedImage);
+        }
+    }
+    else {
         emit frameReady(m_Image);
     }
 }

@@ -24,6 +24,7 @@ public slots:
 
 private:
     QImage m_Image;
+    QImage m_OverlayedImage;
     bool m_OverlayEnabled;
 };
 
