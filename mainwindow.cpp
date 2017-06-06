@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpen_folder, SIGNAL(triggered(bool)), this, SLOT(openDir()));
     connect(&m_FlicPlayer, SIGNAL(frameReady(QImage)), ui->displaySurface, SLOT(present(QImage)));
     connect(&m_PicRender, SIGNAL(frameReady(QImage)), ui->displaySurface, SLOT(present(QImage)));
+    connect(ui->zoomSlider, SIGNAL(valueChanged(int)), ui->displaySurface, SLOT(resize(int)));
 
     connect(this, SIGNAL(directoryOpened(QString)), m_ImageModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_VideoModel, SLOT(processDirectory(QString)));
