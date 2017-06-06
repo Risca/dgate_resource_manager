@@ -227,16 +227,19 @@ void PictureRender::overlay(const QModelIndex &index)
 
     QImage overlay;
     readImage(index, file, overlay, m_Image.colorTable());
-    overlay = overlay.convertToFormat(QImage::Format_ARGB32);
+    QList<QPoint> alphaPixels;
+    const uchar *bits = overlay.bits();
     for (int line = 0; line < overlay.height(); ++line) {
-        QRgb *pixel = reinterpret_cast<QRgb*>(overlay.scanLine(line));
-        for (int c = 0; c < overlay.width(); ++c, ++pixel) {
-            if (*pixel == qRgba(0, 0xFF, 0, 0xFF) ||
-                *pixel == qRgba(0, 0, 0, 0xFF))
-            {
-                *pixel = qRgba(0, 0, 0, 0);
+        for (int row = 0; row < overlay.width(); ++row) {
+            const uchar pixel = bits[line * overlay.width() + row];
+            if (pixel == 0) {
+                alphaPixels.push_back(QPoint(row, line));
             }
         }
+    }
+    overlay = overlay.convertToFormat(QImage::Format_ARGB32);
+    foreach (const QPoint& p, alphaPixels) {
+        overlay.setPixel(p, qRgba(0, 0, 0, 0));
     }
 
     QImage surface = m_Image.convertToFormat(QImage::Format_ARGB32);
