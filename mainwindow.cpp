@@ -46,8 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(this, SIGNAL(directoryOpened(QString)), this, SLOT(setWindowTitle(QString)));
     connect(ui->actionOpen_folder, SIGNAL(triggered(bool)), this, SLOT(openDir()));
-    connect(&m_FlicPlayer, SIGNAL(frameReady(QImage)), ui->widget, SLOT(present(QImage)));
-    connect(&m_PicRender, SIGNAL(frameReady(QImage)), ui->widget, SLOT(present(QImage)));
+    connect(&m_FlicPlayer, SIGNAL(frameReady(QImage)), ui->displaySurface, SLOT(present(QImage)));
+    connect(&m_PicRender, SIGNAL(frameReady(QImage)), ui->displaySurface, SLOT(present(QImage)));
 
     connect(this, SIGNAL(directoryOpened(QString)), m_ImageModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_VideoModel, SLOT(processDirectory(QString)));
@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(directoryOpened(QString)), m_TextModel, SLOT(processDirectory(QString)));
 
     connect(ui->imageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_PicRender, SLOT(render(QModelIndex)));
+    connect(ui->imageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(stop()));
     connect(ui->overlayImageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_PicRender, SLOT(overlay(QModelIndex)));
     connect(ui->overlayEnableCheckBox, SIGNAL(clicked(bool)), &m_PicRender, SLOT(enableOverlay(bool)));
     connect(ui->videoListView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));

@@ -27,24 +27,14 @@ FlicPlayer::~FlicPlayer()
 
 void FlicPlayer::play(const QString &filename)
 {
-    if (m_File.isOpen()) {
-        m_File.close();
-    }
-    m_File.setFileName(filename);
+    stop();
 
+    m_File.setFileName(filename);
     if (!m_File.open(QFile::ReadOnly)) {
         qWarning() << "failed to open" << filename;
-    }
-    if (m_FileInterface) {
-        delete m_FileInterface;
-        m_FileInterface = 0;
+        return;
     }
     m_FileInterface = new flic::QIODeviceInterface(m_File);
-
-    if (m_FlicDecoder) {
-        delete m_FlicDecoder;
-        m_FlicDecoder = 0;
-    }
     m_FlicDecoder = new flic::Decoder(m_FileInterface);
 
     if (m_FlicDecoder) {
@@ -80,6 +70,16 @@ void FlicPlayer::play(const QModelIndex &index)
     play(file);
 }
 
+void FlicPlayer::stop()
+{
+    delete m_FlicDecoder;
+    m_FlicDecoder = 0;
+    delete m_FileInterface;
+    m_FileInterface = 0;
+    m_File.close();
+    m_Pixels.clear();
+}
+
 void FlicPlayer::processNextFrame()
 {
     if (m_FlicDecoder) {
@@ -100,12 +100,7 @@ void FlicPlayer::processNextFrame()
 
         m_FrameCount++;
         if (m_FrameCount >= m_Header.frames) {
-            delete m_FlicDecoder;
-            m_FlicDecoder = 0;
-            delete m_FileInterface;
-            m_FileInterface = 0;
-            m_File.close();
-            m_Pixels.clear();
+            stop();
             emit finished();
         }
         else {

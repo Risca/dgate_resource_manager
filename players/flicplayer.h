@@ -27,6 +27,7 @@ public:
 public slots:
     void play(const QString &filename);
     void play(const QModelIndex &index);
+    void stop();
 
 signals:
     void frameReady(const QImage &frame);

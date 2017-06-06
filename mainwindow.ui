@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
-    <height>496</height>
+    <width>809</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="VideoSurface" name="widget" native="true">
+     <widget class="VideoSurface" name="displaySurface" native="true">
       <property name="minimumSize">
        <size>
         <width>640</width>
@@ -134,7 +134,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>614</width>
+     <width>809</width>
      <height>19</height>
     </rect>
    </property>
