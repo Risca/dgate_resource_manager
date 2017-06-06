@@ -25,7 +25,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>391</width>
+         <width>73</width>
          <height>445</height>
         </rect>
        </property>
@@ -65,27 +65,46 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_2">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <widget class="QGroupBox" name="overlayGroupBox">
+          <property name="title">
+           <string>Overlay image</string>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <item>
-            <widget class="QCheckBox" name="overlayEnableCheckBox">
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>Overlay image</string>
+              <string>Image</string>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QTreeView" name="overlayImageTreeView">
-             <property name="enabled">
-              <bool>false</bool>
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Sub-palette 1</string>
              </property>
             </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Sub palette 2</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QTreeView" name="overlayImageTreeView_1"/>
+           </item>
+           <item row="1" column="1">
+            <widget class="QTreeView" name="overlayImageTreeView_2"/>
+           </item>
+           <item row="1" column="2">
+            <widget class="QTreeView" name="overlayImageTreeView_3"/>
            </item>
           </layout>
          </widget>
@@ -256,22 +275,6 @@
     <hint type="destinationlabel">
      <x>199</x>
      <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>overlayEnableCheckBox</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>overlayImageTreeView</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>469</x>
-     <y>286</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>469</x>
-     <y>373</y>
     </hint>
    </hints>
   </connection>

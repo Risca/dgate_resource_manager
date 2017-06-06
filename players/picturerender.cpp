@@ -2,6 +2,7 @@
 
 #include "models/image.h"
 
+#include <algorithm>
 #include <QColor>
 #include <QDebug>
 #include <QFile>
@@ -17,7 +18,7 @@
 
 namespace {
 
-bool openFile(const QModelIndex &index, QFile &file)
+bool OpenFile(const QModelIndex &index, QFile &file)
 {
     QString filename = index.parent().data(Qt::UserRole).toString();
     qDebug() << "using pic" << index.row() + 1 << "in" << filename;
@@ -66,8 +67,18 @@ bool GetSizes(const QModelIndex &index, qint16 &width, qint16 &height)
     return true;
 }
 
-void ReadPaletteFromFile(const QModelIndex &index, QFile &file, QVector<QRgb> &colors)
+bool ImageHasPalette(const QModelIndex &index)
 {
+    return index.sibling(index.row(), model::Image::COLUMN_PALETTE).data().toBool();
+}
+
+void ReadPalette(const QModelIndex &index, QVector<QRgb> &colors)
+{
+    QFile file;
+    if (!OpenFile(index, file)) {
+        return;
+    }
+
     qint32 fileOff, imgOff;
     if (!GetOffsets(index, fileOff, imgOff)) {
         return;
@@ -94,7 +105,7 @@ void ReadPaletteFromFile(const QModelIndex &index, QFile &file, QVector<QRgb> &c
     }
 }
 
-void readImage(const QModelIndex &index, QFile &file, QImage &image, const QVector<QRgb> &colors)
+void ReadImageFromFile(const QModelIndex &index, QFile &file, QImage &image, const QVector<QRgb> &colors)
 {
     qint32 fileOff, imgOff;
     if (!GetOffsets(index, fileOff, imgOff)) {
@@ -125,9 +136,20 @@ void readImage(const QModelIndex &index, QFile &file, QImage &image, const QVect
     delete [] data;
 }
 
+void ReadImage(const QModelIndex &index, QImage &image, const QVector<QRgb> &colors)
+{
+    QFile file;
+    if (!OpenFile(index, file)) {
+        return;
+    }
+
+    return ReadImageFromFile(index, file, image, colors);
+}
+
 } // anonymous namespace
 
-PictureRender::PictureRender(QObject *parent) : QObject(parent), m_OverlayEnabled(false)
+PictureRender::PictureRender(QObject *parent) :
+    QObject(parent)
 {
 
 }
@@ -144,16 +166,11 @@ void PictureRender::render(const QModelIndex &index)
         return;
     }
 
-    QFile file;
-    if (!openFile(index, file)) {
-        return;
-    }
-
     // figure out what palette to use
     QVector<QRgb> colors;
-    if (index.sibling(index.row(), model::Image::COLUMN_PALETTE).data().toBool()) {
+    if (ImageHasPalette(index)) {
         // Image contain its own palette
-        ReadPaletteFromFile(index, file, colors);
+        ReadPalette(index, colors);
     }
     else {
         // Search backwards trying to find a palette from an other pic
@@ -166,7 +183,7 @@ void PictureRender::render(const QModelIndex &index)
         if (paletteRow != -1) {
             // read palette from image
             qDebug() << "using palette from image" << paletteRow;
-            ReadPaletteFromFile(index.sibling(paletteRow, 0), file, colors);
+            ReadPalette(index.sibling(paletteRow, 0), colors);
         }
         else {
             // use a default palette
@@ -181,23 +198,13 @@ void PictureRender::render(const QModelIndex &index)
         return;
     }
 
-    readImage(index, file, m_Image, colors);
+    ReadImage(index, m_Image, colors);
     emit frameReady(m_Image);
 }
 
 void PictureRender::overlay(const QModelIndex &index)
 {
-    if (!m_OverlayEnabled) {
-        return;
-    }
-
-    if (!index.parent().isValid()) {
-        qWarning() << "no valid parent";
-        return;
-    }
-
-    if (m_Image.isNull()) {
-        qWarning() << "no image to overlay";
+    if (!m_Overlay.enabled || !index.parent().isValid() || m_Image.isNull()) {
         return;
     }
 
@@ -213,7 +220,7 @@ void PictureRender::overlay(const QModelIndex &index)
     }
 
     QFile file;
-    if (!openFile(index, file)) {
+    if (!OpenFile(index, file)) {
         return;
     }
     if (!file.seek(fileOff)) {
@@ -224,42 +231,77 @@ void PictureRender::overlay(const QModelIndex &index)
     file.read(buf, 4);
     quint16 x = *reinterpret_cast<quint16*>(&buf[0]);
     quint16 y = *reinterpret_cast<quint16*>(&buf[2]);
+    m_Overlay.coord = QPoint(x, y);
+    ReadImageFromFile(index, file, m_Overlay.image, m_Image.colorTable());
 
-    QImage overlay;
-    readImage(index, file, overlay, m_Image.colorTable());
-    QList<QPoint> alphaPixels;
-    const uchar *bits = overlay.bits();
-    for (int line = 0; line < overlay.height(); ++line) {
-        for (int row = 0; row < overlay.width(); ++row) {
-            const uchar pixel = bits[line * overlay.width() + row];
-            if (pixel == 0) {
-                alphaPixels.push_back(QPoint(row, line));
-            }
-        }
-    }
-    overlay = overlay.convertToFormat(QImage::Format_ARGB32);
-    foreach (const QPoint& p, alphaPixels) {
-        overlay.setPixel(p, qRgba(0, 0, 0, 0));
-    }
-
-    QImage surface = m_Image.convertToFormat(QImage::Format_ARGB32);
-    QPainter p(&surface);
-    p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    p.drawImage(x, y, overlay);
-    p.end();
-    m_OverlayedImage = surface;
-    emit frameReady(m_OverlayedImage);
+    performOverlay();
 }
 
 void PictureRender::enableOverlay(bool enable)
 {
-    m_OverlayEnabled = enable;
+    m_Overlay.enabled = enable;
     if (enable) {
-        if (!m_OverlayedImage.isNull()) {
-            emit frameReady(m_OverlayedImage);
+        if (!m_Overlay.image.isNull()) {
+            performOverlay();
         }
     }
     else {
         emit frameReady(m_Image);
     }
+}
+
+void PictureRender::setSubPalette1(const QModelIndex &index)
+{
+    if (!m_Overlay.enabled || !index.parent().isValid() || m_Image.isNull() || !ImageHasPalette(index)) {
+        return;
+    }
+
+    QVector<QRgb> subPalette;
+    ReadPalette(index, subPalette);
+
+    QVector<QRgb> palette = m_Overlay.image.colorTable();
+    std::copy(subPalette.begin() + 16, subPalette.begin() + (16+16), palette.begin() + 16);
+    m_Overlay.image.setColorTable(palette);
+    performOverlay();
+}
+
+void PictureRender::setSubPalette2(const QModelIndex &index)
+{
+    if (!m_Overlay.enabled || !index.parent().isValid() || m_Image.isNull() || !ImageHasPalette(index)) {
+        return;
+    }
+
+    QVector<QRgb> subPalette;
+    ReadPalette(index, subPalette);
+
+    QVector<QRgb> palette = m_Overlay.image.colorTable();
+    std::copy(subPalette.begin() + 32, subPalette.begin() + (32+48), palette.begin() + 32);
+    m_Overlay.image.setColorTable(palette);
+    performOverlay();
+}
+
+void PictureRender::performOverlay()
+{
+    QImage image = m_Overlay.image;
+    QList<QPoint> alphaPixels;
+    const uchar *bits = image.bits();
+    for (int line = 0; line < image.height(); ++line) {
+        for (int row = 0; row < image.width(); ++row) {
+            const uchar pixel = bits[line * image.width() + row];
+            if (pixel == 0) {
+                alphaPixels.push_back(QPoint(row, line));
+            }
+        }
+    }
+    image = image.convertToFormat(QImage::Format_ARGB32);
+    foreach (const QPoint& p, alphaPixels) {
+        image.setPixel(p, qRgba(0, 0, 0, 0));
+    }
+
+    QImage surface = m_Image.convertToFormat(QImage::Format_ARGB32);
+    QPainter p(&surface);
+    p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    p.drawImage(m_Overlay.coord, image);
+    p.end();
+    emit frameReady(surface);
 }

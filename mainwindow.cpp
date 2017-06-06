@@ -28,14 +28,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     ui->imageTreeView->setModel(m_ImageModel);
-    ui->overlayImageTreeView->setModel(m_ImageModel);
+    ui->overlayImageTreeView_1->setModel(m_ImageModel);
+    ui->overlayImageTreeView_2->setModel(m_ImageModel);
+    ui->overlayImageTreeView_3->setModel(m_ImageModel);
     ui->videoListView->setModel(m_VideoModel);
     ui->musicListView->setModel(m_MusicModel);
     ui->voiceListView->setModel(m_VoiceModel);
     ui->textListView->setModel(m_TextModel);
 
     ui->imageTreeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->overlayImageTreeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->overlayImageTreeView_1->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->overlayImageTreeView_2->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->overlayImageTreeView_3->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 
     ui->imageTreeView->setItemDelegateForColumn(model::Image::COLUMN_OFFSET,
                                                 new HexNumberDelegate(this));
@@ -56,15 +60,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(directoryOpened(QString)), m_VoiceModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_TextModel, SLOT(processDirectory(QString)));
 
-    connect(ui->imageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_PicRender, SLOT(render(QModelIndex)));
-    connect(ui->imageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(stop()));
-    connect(ui->overlayImageTreeView, SIGNAL(doubleClicked(QModelIndex)), &m_PicRender, SLOT(overlay(QModelIndex)));
-    connect(ui->overlayEnableCheckBox, SIGNAL(clicked(bool)), &m_PicRender, SLOT(enableOverlay(bool)));
-    connect(ui->videoListView, SIGNAL(doubleClicked(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));
-    connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(play(QModelIndex)));
-    connect(ui->musicListView, SIGNAL(doubleClicked(QModelIndex)), &m_WavePlayer, SLOT(stop()));
-    connect(ui->voiceListView, SIGNAL(doubleClicked(QModelIndex)), &m_WavePlayer, SLOT(play(QModelIndex)));
-    connect(ui->voiceListView, SIGNAL(doubleClicked(QModelIndex)), &m_XmiPlayer, SLOT(stop()));
+    connect(ui->imageTreeView, SIGNAL(activated(QModelIndex)), &m_PicRender, SLOT(render(QModelIndex)));
+    connect(ui->imageTreeView, SIGNAL(activated(QModelIndex)), &m_FlicPlayer, SLOT(stop()));
+    connect(ui->overlayImageTreeView_1, SIGNAL(activated(QModelIndex)), &m_PicRender, SLOT(overlay(QModelIndex)));
+    connect(ui->overlayImageTreeView_2, SIGNAL(activated(QModelIndex)), &m_PicRender, SLOT(setSubPalette1(QModelIndex)));
+    connect(ui->overlayImageTreeView_3, SIGNAL(activated(QModelIndex)), &m_PicRender, SLOT(setSubPalette2(QModelIndex)));
+    connect(ui->overlayGroupBox, SIGNAL(clicked(bool)), &m_PicRender, SLOT(enableOverlay(bool)));
+    connect(ui->videoListView, SIGNAL(activated(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));
+    connect(ui->musicListView, SIGNAL(activated(QModelIndex)), &m_XmiPlayer, SLOT(play(QModelIndex)));
+    connect(ui->musicListView, SIGNAL(activated(QModelIndex)), &m_WavePlayer, SLOT(stop()));
+    connect(ui->voiceListView, SIGNAL(activated(QModelIndex)), &m_WavePlayer, SLOT(play(QModelIndex)));
+    connect(ui->voiceListView, SIGNAL(activated(QModelIndex)), &m_XmiPlayer, SLOT(stop()));
 
     if (!m_LastDir.isEmpty()) {
         emit directoryOpened(m_LastDir);

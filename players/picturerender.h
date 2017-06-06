@@ -3,6 +3,7 @@
 
 #include <QImage>
 #include <QObject>
+#include <QPoint>
 
 class QPixmap;
 class QModelIndex;
@@ -21,11 +22,18 @@ public slots:
     void render(const QModelIndex &index);
     void overlay(const QModelIndex &index);
     void enableOverlay(bool enable);
+    void setSubPalette1(const QModelIndex &index);
+    void setSubPalette2(const QModelIndex &index);
 
 private:
     QImage m_Image;
-    QImage m_OverlayedImage;
-    bool m_OverlayEnabled;
+    struct {
+        bool enabled = 0;
+        QPoint coord;
+        QImage image;
+    } m_Overlay;
+
+    void performOverlay();
 };
 
 #endif // PICTURERENDER_H
