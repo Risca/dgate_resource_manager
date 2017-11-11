@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     models/text.cpp \
     models/image.cpp \
     models/treeitem.cpp \
-    players/picturerender.cpp
+    players/picturerender.cpp \
+    models/palette.cpp
 
 HEADERS  += mainwindow.h \
     videosurface.h \
@@ -45,7 +46,9 @@ HEADERS  += mainwindow.h \
     models/image.h \
     models/treeitem.h \
     players/picturerender.h \
-    hexnumberdelegate.h
+    hexnumberdelegate.h \
+    models/palette.h \
+    cellborderdelegate.h
 
 FORMS    += mainwindow.ui
 

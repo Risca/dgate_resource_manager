@@ -8,6 +8,7 @@ VideoSurface::VideoSurface(QWidget *parent, Qt::WindowFlags f) :
     QWidget( parent, f ),
     m_ScaleFactor(1)
 {
+    setMouseTracking(true);
 }
 
 QSize VideoSurface::sizeHint() const
@@ -37,4 +38,19 @@ void VideoSurface::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.drawImage(event->rect(), m_Image, event->rect());
+}
+
+void VideoSurface::mouseMoveEvent(QMouseEvent *event)
+{
+    if (m_Image.isNull()) {
+        return;
+    }
+
+    int x = event->pos().x();
+    int y = event->pos().y();
+    if (x <= m_Image.width() && y <= m_Image.height()) {
+        x /= m_ScaleFactor;
+        y /= m_ScaleFactor;
+        emit mouseMoved(x, y);
+    }
 }

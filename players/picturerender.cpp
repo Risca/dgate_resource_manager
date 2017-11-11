@@ -199,7 +199,18 @@ void PictureRender::render(const QModelIndex &index)
     }
 
     ReadImage(index, m_Image, colors);
-    emit frameReady(m_Image);
+    if (m_Overlay.enabled) {
+        if (m_Overlay.image.isNull()) {
+            emit frameReady(m_Image);
+        }
+        else {
+            performOverlay();
+        }
+    }
+    else {
+        m_Overlay.surface = QImage();
+        emit frameReady(m_Image);
+    }
 }
 
 void PictureRender::overlay(const QModelIndex &index)
@@ -241,7 +252,10 @@ void PictureRender::enableOverlay(bool enable)
 {
     m_Overlay.enabled = enable;
     if (enable) {
-        if (!m_Overlay.image.isNull()) {
+        if (!m_Overlay.surface.isNull()) {
+            emit frameReady(m_Overlay.surface);
+        }
+        else if (!m_Overlay.image.isNull()) {
             performOverlay();
         }
     }
@@ -250,50 +264,32 @@ void PictureRender::enableOverlay(bool enable)
     }
 }
 
-void PictureRender::setSubPalette1(const QModelIndex &index)
+void PictureRender::selectPixel(int x, int y)
 {
-    if (!m_Overlay.enabled || !index.parent().isValid() || m_Image.isNull() || !ImageHasPalette(index)) {
-        return;
+    if (x < m_Image.width() && y < m_Image.height()) {
+        if (m_Overlay.enabled && !m_Overlay.surface.isNull()) {
+            emit colorIndexSelected(m_Overlay.surface.pixelIndex(x, y));
+        }
+        else {
+            emit colorIndexSelected(m_Image.pixelIndex(x, y));
+        }
     }
-
-    QVector<QRgb> subPalette;
-    ReadPalette(index, subPalette);
-
-    QVector<QRgb> palette = m_Overlay.image.colorTable();
-    std::copy(subPalette.begin() + 16, subPalette.begin() + (16+16), palette.begin() + 16);
-    m_Overlay.image.setColorTable(palette);
-    performOverlay();
-}
-
-void PictureRender::setSubPalette2(const QModelIndex &index)
-{
-    if (!m_Overlay.enabled || !index.parent().isValid() || m_Image.isNull() || !ImageHasPalette(index)) {
-        return;
-    }
-
-    QVector<QRgb> subPalette;
-    ReadPalette(index, subPalette);
-
-    QVector<QRgb> palette = m_Overlay.image.colorTable();
-    std::copy(subPalette.begin() + 32, subPalette.begin() + (32+48), palette.begin() + 32);
-    m_Overlay.image.setColorTable(palette);
-    performOverlay();
 }
 
 void PictureRender::performOverlay()
 {
-    QImage image = m_Overlay.image;
+    const int width = m_Overlay.image.width();
+    const int height = m_Overlay.image.height();
     QList<QPoint> alphaPixels;
-    const uchar *bits = image.bits();
-    for (int line = 0; line < image.height(); ++line) {
-        for (int row = 0; row < image.width(); ++row) {
-            const uchar pixel = bits[line * image.width() + row];
-            if (pixel == 0) {
-                alphaPixels.push_back(QPoint(row, line));
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
+            int pixelIndex = m_Overlay.image.pixelIndex(x, y);
+            if (pixelIndex == 0) {
+                alphaPixels.push_back(QPoint(x, y));
             }
         }
     }
-    image = image.convertToFormat(QImage::Format_ARGB32);
+    QImage image = m_Overlay.image.convertToFormat(QImage::Format_ARGB32);
     foreach (const QPoint& p, alphaPixels) {
         image.setPixel(p, qRgba(0, 0, 0, 0));
     }
@@ -303,5 +299,6 @@ void PictureRender::performOverlay()
     p.setCompositionMode(QPainter::CompositionMode_SourceOver);
     p.drawImage(m_Overlay.coord, image);
     p.end();
-    emit frameReady(surface);
+    m_Overlay.surface = surface.convertToFormat(QImage::Format_Indexed8, m_Image.colorTable());;
+    emit frameReady(m_Overlay.surface);
 }

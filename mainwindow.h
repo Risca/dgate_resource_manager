@@ -19,6 +19,7 @@ class Video;
 class Music;
 class Voice;
 class Text;
+class Palette;
 }
 
 namespace Ui {
@@ -35,6 +36,7 @@ public:
 
 public slots:
     void openDir();
+    void indicatePixelPosition(int x, int y);
 
 signals:
     void directoryOpened(const QString& dir);
@@ -53,6 +55,7 @@ private:
     model::Music* m_MusicModel;
     model::Voice* m_VoiceModel;
     model::Text* m_TextModel;
+    model::Palette* m_PaletteModel;
 };
 
 #endif // MAINWINDOW_H

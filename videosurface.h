@@ -14,12 +14,16 @@ public:
 
     QSize sizeHint() const;
 
+signals:
+    void mouseMoved(int x, int y);
+
 public slots:
     void present(const QImage &frame);
     void resize(int times);
 
 protected:
     void paintEvent(QPaintEvent * event);
+    void mouseMoveEvent(QMouseEvent * event);
 
 private:
     QImage m_Image;

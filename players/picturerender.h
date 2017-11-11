@@ -5,7 +5,6 @@
 #include <QObject>
 #include <QPoint>
 
-class QPixmap;
 class QModelIndex;
 
 class PictureRender : public QObject
@@ -17,13 +16,13 @@ public:
 
 signals:
     void frameReady(const QImage &frame);
+    void colorIndexSelected(int);
 
 public slots:
     void render(const QModelIndex &index);
     void overlay(const QModelIndex &index);
     void enableOverlay(bool enable);
-    void setSubPalette1(const QModelIndex &index);
-    void setSubPalette2(const QModelIndex &index);
+    void selectPixel(int x, int y);
 
 private:
     QImage m_Image;
@@ -31,6 +30,7 @@ private:
         bool enabled = 0;
         QPoint coord;
         QImage image;
+        QImage surface;
     } m_Overlay;
 
     void performOverlay();

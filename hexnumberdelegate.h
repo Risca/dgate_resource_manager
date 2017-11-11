@@ -21,7 +21,6 @@ public:
 
         return QString("0x") + QString::number(v, 16);
     }
-
 };
 
 #endif // HEXNUMBERDELEGATE_H
