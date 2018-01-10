@@ -37,6 +37,7 @@ public:
 public slots:
     void openDir();
     void indicatePixelPosition(int x, int y);
+    void indicateColorIndex(int index);
 
 signals:
     void directoryOpened(const QString& dir);
@@ -56,6 +57,8 @@ private:
     model::Voice* m_VoiceModel;
     model::Text* m_TextModel;
     model::Palette* m_PaletteModel;
+
+    QPoint m_PixelPosition;
 };
 
 #endif // MAINWINDOW_H

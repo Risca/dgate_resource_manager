@@ -74,8 +74,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->voiceListView, SIGNAL(activated(QModelIndex)), &m_XmiPlayer, SLOT(stop()));
 
     connect(ui->displaySurface, SIGNAL(mouseMoved(int, int)), this, SLOT(indicatePixelPosition(int, int)));
-    connect(ui->displaySurface, SIGNAL(mouseMoved(int,int)), &m_PicRender, SLOT(selectPixel(int,int)));
+    connect(ui->displaySurface, SIGNAL(mouseMoved(int, int)), &m_PicRender, SLOT(selectPixel(int,int)));
     connect(&m_PicRender, SIGNAL(colorIndexSelected(int)), m_PaletteModel, SLOT(selectPaletteColor(int)));
+    connect(&m_PicRender, SIGNAL(colorIndexSelected(int)), this, SLOT(indicateColorIndex(int)));
 
     if (!m_LastDir.isEmpty()) {
         emit directoryOpened(m_LastDir);
@@ -106,7 +107,15 @@ void MainWindow::openDir()
 
 void MainWindow::indicatePixelPosition(int x, int y)
 {
+    m_PixelPosition = QPoint(x, y);
     QString position;
     QTextStream(&position) << "(" << x << ", " << y << ")";
     ui->statusBar->showMessage(position);
+}
+
+void MainWindow::indicateColorIndex(int index)
+{
+    QString text;
+    QTextStream(&text) << "(" << m_PixelPosition.x() << ", " << m_PixelPosition.y() << ", " << index << ")";
+    ui->statusBar->showMessage(text);
 }
