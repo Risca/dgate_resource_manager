@@ -89,6 +89,7 @@ void ReadPalette(const QModelIndex &index, QVector<QRgb> &colors)
         return;
     }
 
+    qDebug() << "reading palette from" << file.fileName();
     QByteArray paletteData = file.read(PALETTE_SIZE);
     const char* d = paletteData.constBegin();
     for (int i=0; i<256; ++i) {
@@ -280,25 +281,14 @@ void PictureRender::performOverlay()
 {
     const int width = m_Overlay.image.width();
     const int height = m_Overlay.image.height();
-    QList<QPoint> alphaPixels;
+    m_Overlay.surface = m_Image;
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
             int pixelIndex = m_Overlay.image.pixelIndex(x, y);
-            if (pixelIndex == 0) {
-                alphaPixels.push_back(QPoint(x, y));
+            if (pixelIndex != 0) {
+                m_Overlay.surface.setPixel(m_Overlay.coord + QPoint(x, y), pixelIndex);
             }
         }
     }
-    QImage image = m_Overlay.image.convertToFormat(QImage::Format_ARGB32);
-    foreach (const QPoint& p, alphaPixels) {
-        image.setPixel(p, qRgba(0, 0, 0, 0));
-    }
-
-    QImage surface = m_Image.convertToFormat(QImage::Format_ARGB32);
-    QPainter p(&surface);
-    p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    p.drawImage(m_Overlay.coord, image);
-    p.end();
-    m_Overlay.surface = surface.convertToFormat(QImage::Format_Indexed8, m_Image.colorTable());;
     emit frameReady(m_Overlay.surface);
 }

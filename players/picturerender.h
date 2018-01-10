@@ -27,7 +27,7 @@ public slots:
 private:
     QImage m_Image;
     struct {
-        bool enabled = 0;
+        bool enabled = false;
         QPoint coord;
         QImage image;
         QImage surface;
