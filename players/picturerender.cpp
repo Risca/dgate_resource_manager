@@ -284,10 +284,11 @@ void PictureRender::performOverlay()
     m_Overlay.surface = m_Image;
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
-            int pixelIndex = m_Overlay.image.pixelIndex(x, y);
-            if (pixelIndex != 0) {
-                m_Overlay.surface.setPixel(m_Overlay.coord + QPoint(x, y), pixelIndex);
-            }
+            const QPoint overlayPos = QPoint(x, y);
+            const QPoint pos = m_Overlay.coord + overlayPos;
+            int index = m_Overlay.image.pixelIndex(overlayPos);
+            index ^= m_Image.pixelIndex(pos);
+            m_Overlay.surface.setPixel(pos, index);
         }
     }
     emit frameReady(m_Overlay.surface);
