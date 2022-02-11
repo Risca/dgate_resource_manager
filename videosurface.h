@@ -1,9 +1,9 @@
 #ifndef VIDEOSURFACE_H
 #define VIDEOSURFACE_H
 
+#include <QImage>
+#include <QSize>
 #include <QWidget>
-
-class QPolygon;
 
 class VideoSurface : public QWidget
 {
@@ -16,6 +16,7 @@ public:
 
 signals:
     void mouseMoved(int x, int y);
+    void scaleFactorChanged(int);
 
 public slots:
     void present(const QImage &frame);
@@ -27,7 +28,9 @@ protected:
 
 private:
     QImage m_Image;
+    QSize m_ScaledSize;
     int m_ScaleFactor;
+    QPoint m_MousePos;
 };
 
 #endif // VIDEOSURFACE_H

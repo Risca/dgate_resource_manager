@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&m_PicRender, SIGNAL(frameReady(QImage)), ui->displaySurface, SLOT(present(QImage)));
     connect(&m_PicRender, SIGNAL(frameReady(QImage)), m_PaletteModel, SLOT(setPalette(QImage)));
     connect(ui->zoomSlider, SIGNAL(valueChanged(int)), ui->displaySurface, SLOT(resize(int)));
+    connect(ui->displaySurface, SIGNAL(scaleFactorChanged(int)), ui->zoomSlider, SLOT(setValue(int)));
 
     connect(this, SIGNAL(directoryOpened(QString)), m_ImageModel, SLOT(processDirectory(QString)));
     connect(this, SIGNAL(directoryOpened(QString)), m_VideoModel, SLOT(processDirectory(QString)));
