@@ -93,8 +93,9 @@ QVariant Video::headerData(int section, Qt::Orientation orientation, int role) c
 void Video::processDirectory(const QString &dir)
 {
     m_Dir = QDir(dir);
-    QSet<QString> files = m_Dir.entryList(QDir::Files).toSet();
-    m_Videos = files.intersect(g_KnownVideoFiles).toList();
+    QStringList filenames = m_Dir.entryList(QDir::Files);
+    QSet<QString> files = QSet<QString>(filenames.begin(), filenames.end());
+    m_Videos = files.intersect(g_KnownVideoFiles).values();
     std::sort(m_Videos.begin(), m_Videos.end());
     emit dataChanged(createIndex(0, 0),
                      createIndex(rowCount() - 1, 0));

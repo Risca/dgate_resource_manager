@@ -10,7 +10,7 @@ class VideoSurface : public QWidget
     Q_OBJECT
 
 public:
-    explicit VideoSurface(QWidget *parent = 0, Qt::WindowFlags f = 0 );
+    explicit VideoSurface(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags() );
 
     QSize sizeHint() const;
 

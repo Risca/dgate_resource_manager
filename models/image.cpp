@@ -192,10 +192,11 @@ QVariant Image::data(const QModelIndex &index, int role) const
 void Image::processDirectory(const QString &dir)
 {
     m_Dir = dir;
-    QSet<QString> fileSet = QDir(dir).entryList(QDir::Files).toSet();
-    QStringList fileList = fileSet.intersect(g_KnownImageFiles).toList();
-    std::sort(fileList.begin(), fileList.end());
-    foreach (const QString &filename, fileList) {
+    QStringList filenames = QDir(dir).entryList(QDir::Files);
+    QSet<QString> files(filenames.begin(), filenames.end());
+    QStringList knownFiles = files.intersect(g_KnownImageFiles).values();
+    std::sort(knownFiles.begin(), knownFiles.end());
+    foreach (const QString &filename, knownFiles) {
         TreeItem::ItemData itemData;
         itemData[0] = filename;
         // hacky workaround to make stuff show up
