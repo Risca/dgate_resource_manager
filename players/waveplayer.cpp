@@ -10,7 +10,7 @@
 
 WavePlayer::WavePlayer(QObject *parent) :
     QObject(parent),
-    m_Rate(10900),
+    m_Rate(22050),
     m_SampleSize(8),
     m_AudioOutput(0)
 {
@@ -97,7 +97,7 @@ void WavePlayer::playWave()
     // Set up the format
     format.setCodec("audio/pcm");
     format.setSampleRate(m_Rate);
-    format.setChannelCount(2);
+    format.setChannelCount(1);
     format.setSampleSize(m_SampleSize);
     format.setByteOrder(QAudioFormat::Endian(QSysInfo::ByteOrder));
     format.setSampleType(QAudioFormat::SignedInt);
