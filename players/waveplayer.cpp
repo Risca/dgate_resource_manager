@@ -8,8 +8,6 @@
 #include <QFile>
 #include <QModelIndex>
 
-const uint32_t WavePlayer::g_BufSize = 16384;
-
 WavePlayer::WavePlayer(QObject *parent) :
     QObject(parent),
     m_Rate(10900),

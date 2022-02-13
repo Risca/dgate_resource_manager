@@ -29,7 +29,6 @@ protected:
 
     QBuffer m_AudioBuf;
     const unsigned int m_Rate;
-    static const uint32_t g_BufSize;
 
     bool readFile(QByteArray &buf, const QModelIndex &index);
     void playWave();

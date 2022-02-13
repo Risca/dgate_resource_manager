@@ -7,6 +7,8 @@
 #include <vector>
 #include <wildmidi_lib.h>
 
+static const uint32_t g_BufSize = 16384;
+
 XmiPlayer::XmiPlayer(QObject *parent) : WavePlayer(44100, 16, parent)
 {
     long libraryver = WildMidi_GetVersion();
