@@ -121,6 +121,7 @@ void WavePlayer::playWave()
         foreach (dev, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput)) {
             if (dev.isFormatSupported(format)) {
                 qDebug() << "Found working device:" << dev.deviceName();
+                found = true;
                 break;
             }
             else {
