@@ -43,7 +43,18 @@ void WavePlayer::play(const QModelIndex &index)
     }
 
     m_AudioBuf.close();
-    m_AudioBuf.setData(buf);
+    if (m_SampleSize == 8) {
+        // translate to 16 bit since pulseaudio on my system stopped playing 8 bit pcm :/
+        QVector<int16_t> int16Buf;
+        int16Buf.reserve(buf.size());
+        foreach (char b, buf) {
+            int16Buf.append((int16_t)(b - 0x80) << 8);
+        }
+        m_AudioBuf.setData(reinterpret_cast<const char*>(int16Buf.constData()), int16Buf.size() * sizeof(int16_t));
+    }
+    else {
+        m_AudioBuf.setData(buf);
+    }
     m_AudioBuf.open(QIODevice::ReadWrite);
 
     playWave();
@@ -98,7 +109,8 @@ void WavePlayer::playWave()
     format.setCodec("audio/pcm");
     format.setSampleRate(m_Rate);
     format.setChannelCount(1);
-    format.setSampleSize(m_SampleSize);
+    // pulseaudio won't play 8bit audio for me, so add workaround
+    format.setSampleSize(m_SampleSize == 8 ? 16 : m_SampleSize);
     format.setByteOrder(QAudioFormat::Endian(QSysInfo::ByteOrder));
     format.setSampleType(QAudioFormat::SignedInt);
 
