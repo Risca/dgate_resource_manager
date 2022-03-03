@@ -245,7 +245,7 @@ void Image::parse(QDataStream &stream, TreeItem *parent)
         parent->appendChild(new TreeItem(itemData, parent));
 
         // Align to next offset
-        stream >> flags;
+        stream >> flags; // read 2 bytes of padding
         stream >> offset;
     }
 }
