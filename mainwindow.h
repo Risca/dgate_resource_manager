@@ -10,6 +10,7 @@
 #include <QString>
 
 class QDir;
+class QListWidgetItem;
 class QModelIndex;
 class QSettings;
 
@@ -38,6 +39,8 @@ public slots:
     void openDir();
     void indicatePixelPosition(int x, int y);
     void indicateColorIndex(int index);
+    void addOrRemoveOverlay(const QModelIndex &index);
+    void removeOverlay(QListWidgetItem *item);
 
 signals:
     void directoryOpened(const QString& dir);

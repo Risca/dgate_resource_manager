@@ -14,7 +14,36 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QHeaderView>
+#include <QListWidgetItem>
+#include <QModelIndexList>
 #include <QSettings>
+
+namespace {
+
+QModelIndexList toModelIndexList(const QListWidget *w)
+{
+    QModelIndexList list;
+    int rows = w->count();
+    for (int row = 0; row < rows; ++row) {
+        auto *item = w->item(row);
+        list << item->data(Qt::UserRole).toModelIndex();
+    }
+    return list;
+}
+
+QListWidgetItem* ItemInListWidget(const QListWidget *list, const QModelIndex& wanted)
+{
+    const int rows = list->count();
+    for (int row = 0; row < rows; ++row) {
+        auto *item = list->item(row);
+        auto index = item->data(Qt::UserRole).toModelIndex();
+        if (index == wanted)
+            return item;
+    }
+    return nullptr;
+}
+
+} // anonymous namespace
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -66,8 +95,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->imageTreeView, SIGNAL(activated(QModelIndex)), &m_PicRender, SLOT(render(QModelIndex)));
     connect(ui->imageTreeView, SIGNAL(activated(QModelIndex)), &m_FlicPlayer, SLOT(stop()));
-    connect(ui->overlayImageTreeView, SIGNAL(activated(QModelIndex)), &m_PicRender, SLOT(overlay(QModelIndex)));
     connect(ui->overlayGroupBox, SIGNAL(clicked(bool)), &m_PicRender, SLOT(enableOverlay(bool)));
+    connect(ui->overlayImageTreeView, SIGNAL(activated(QModelIndex)), this, SLOT(addOrRemoveOverlay(QModelIndex)));
+    connect(ui->enabledOverlays, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeOverlay(QListWidgetItem*)));
     connect(ui->videoListView, SIGNAL(activated(QModelIndex)), &m_FlicPlayer, SLOT(play(QModelIndex)));
     connect(ui->musicListView, SIGNAL(activated(QModelIndex)), &m_XmiPlayer, SLOT(play(QModelIndex)));
     connect(ui->musicListView, SIGNAL(activated(QModelIndex)), &m_WavePlayer, SLOT(stop()));
@@ -119,4 +149,36 @@ void MainWindow::indicateColorIndex(int index)
     QString text;
     QTextStream(&text) << "(" << m_PixelPosition.x() << ", " << m_PixelPosition.y() << ", " << index << ")";
     ui->statusBar->showMessage(text);
+}
+
+void MainWindow::addOrRemoveOverlay(const QModelIndex &index)
+{
+    if (!ui->overlayGroupBox->isChecked() || !index.parent().isValid()) {
+        return;
+    }
+
+    int flags = index.sibling(index.row(), model::Image::COLUMN_FLAGS).data().toInt();
+    if ((flags & model::Image::FlagCoordinates) == 0) {
+        qWarning() << "no coordinates in image header";
+        return;
+    }
+
+    auto *item = ItemInListWidget(ui->enabledOverlays, index);
+    if (!item) {
+        QString filename = index.parent().data().toString();
+        quint32 offset = index.sibling(index.row(), model::Image::COLUMN_OFFSET).data().toUInt();
+        auto *item = new QListWidgetItem(filename + " @ 0x" + QString::number(offset, 16));
+        item->setData(Qt::UserRole, index);
+        ui->enabledOverlays->addItem(item);
+
+        m_PicRender.overlay(toModelIndexList(ui->enabledOverlays));
+    }
+    else
+        removeOverlay(item);
+}
+
+void MainWindow::removeOverlay(QListWidgetItem *item)
+{
+    delete item;
+    m_PicRender.overlay(toModelIndexList(ui->enabledOverlays));
 }

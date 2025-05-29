@@ -200,7 +200,7 @@ void PictureRender::render(const QModelIndex &index)
 
     ReadImage(index, m_Image, colors);
     if (m_Overlay.enabled) {
-        if (m_Overlay.image.isNull()) {
+        if (m_Overlay.images.empty()) {
             emit frameReady(m_Image);
         }
         else {
@@ -213,42 +213,6 @@ void PictureRender::render(const QModelIndex &index)
     }
 }
 
-void PictureRender::overlay(const QModelIndex &index)
-{
-    if (!m_Overlay.enabled || !index.parent().isValid() || m_Image.isNull()) {
-        return;
-    }
-
-    int flags = index.sibling(index.row(), model::Image::COLUMN_FLAGS).data().toInt();
-    if ((flags & model::Image::FlagCoordinates) == 0) {
-        qWarning() << "no coordinates in image header";
-        return;
-    }
-
-    qint32 fileOff, imgOff;
-    if (!GetOffsets(index, fileOff, imgOff)) {
-        return;
-    }
-
-    QFile file;
-    if (!OpenFile(index, file)) {
-        return;
-    }
-    if (!file.seek(fileOff)) {
-        return;
-    }
-
-    char buf[4];
-    file.read(buf, 4);
-    quint16 x = *reinterpret_cast<quint16*>(&buf[0]);
-    quint16 y = *reinterpret_cast<quint16*>(&buf[2]);
-    m_Overlay.flags = flags;
-    m_Overlay.coord = QPoint(x, y);
-    ReadImageFromFile(index, file, m_Overlay.image, m_Image.colorTable());
-
-    performOverlay();
-}
-
 void PictureRender::enableOverlay(bool enable)
 {
     m_Overlay.enabled = enable;
@@ -256,7 +220,7 @@ void PictureRender::enableOverlay(bool enable)
         if (!m_Overlay.surface.isNull()) {
             emit frameReady(m_Overlay.surface);
         }
-        else if (!m_Overlay.image.isNull()) {
+        else if (!m_Overlay.images.empty()) {
             performOverlay();
         }
     }
@@ -277,20 +241,74 @@ void PictureRender::selectPixel(int x, int y)
     }
 }
 
+void PictureRender::overlay(const QModelIndexList &images)
+{
+    m_Overlay.images = images;
+
+    if (m_Overlay.images.empty()) {
+        m_Overlay.surface = QImage();
+        emit frameReady(m_Image);
+        return;
+    }
+
+    performOverlay();
+}
+
 void PictureRender::performOverlay()
 {
-    const int width = m_Overlay.image.width();
-    const int height = m_Overlay.image.height();
     m_Overlay.surface = m_Image;
+    for (auto index : m_Overlay.images) {
+        overlayOneImage(index);
+    }
+    emit frameReady(m_Overlay.surface);
+}
+
+void PictureRender::overlayOneImage(const QModelIndex &index)
+{
+    if (!index.parent().isValid()) {
+        return;
+    }
+
+    int flags = index.sibling(index.row(), model::Image::COLUMN_FLAGS).data().toInt();
+    if ((flags & model::Image::FlagCoordinates) == 0) {
+        qWarning() << "no coordinates in image header";
+        return;
+    }
+
+    qint32 fileOff, imgOff;
+    if (!GetOffsets(index, fileOff, imgOff)) {
+        return;
+    }
+
+    QFile file;
+    if (!OpenFile(index, file)) {
+        return;
+    }
+
+    if (!file.seek(fileOff)) {
+        return;
+    }
+
+    char buf[4];
+    file.read(buf, 4);
+    QPoint coord = QPoint(*reinterpret_cast<quint16*>(&buf[0]),
+                          *reinterpret_cast<quint16*>(&buf[2]));
+
+    QImage image;
+    ReadImageFromFile(index, file, image, m_Image.colorTable());
+
+    file.close();
+
+    const int width = image.width();
+    const int height = image.height();
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
             const QPoint overlayPos = QPoint(x, y);
-            const QPoint pos = m_Overlay.coord + overlayPos;
-            int index = m_Overlay.image.pixelIndex(overlayPos);
-            if (m_Overlay.flags & model::Image::Flags::FlagXorIndex)
-                index ^= m_Image.pixelIndex(pos);
+            const QPoint pos = coord + overlayPos;
+            int index = image.pixelIndex(overlayPos);
+            if (flags & model::Image::Flags::FlagTransparent)
+                index ^= m_Overlay.surface.pixelIndex(pos);
             m_Overlay.surface.setPixel(pos, index);
         }
     }
-    emit frameReady(m_Overlay.surface);
 }

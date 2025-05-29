@@ -26,7 +26,7 @@
          <x>0</x>
          <y>0</y>
          <width>380</width>
-         <height>562</height>
+         <height>559</height>
         </rect>
        </property>
       </widget>
@@ -99,19 +99,19 @@
              <bool>false</bool>
             </property>
             <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>20</number>
+             <number>26</number>
             </attribute>
             <attribute name="horizontalHeaderHighlightSections">
              <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>20</number>
             </attribute>
             <attribute name="verticalHeaderDefaultSectionSize">
              <number>20</number>
             </attribute>
             <attribute name="verticalHeaderHighlightSections">
              <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderMinimumSectionSize">
-             <number>20</number>
             </attribute>
            </widget>
           </item>
@@ -137,12 +137,22 @@
              <item>
               <widget class="QLabel" name="label_2">
                <property name="text">
-                <string>Image</string>
+                <string>Images:</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QTreeView" name="overlayImageTreeView"/>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Enabled overlays:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QListWidget" name="enabledOverlays"/>
              </item>
             </layout>
            </widget>

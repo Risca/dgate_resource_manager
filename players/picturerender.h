@@ -2,6 +2,7 @@
 #define PICTURERENDER_H
 
 #include <QImage>
+#include <QModelIndexList>
 #include <QObject>
 #include <QPoint>
 
@@ -20,21 +21,22 @@ signals:
 
 public slots:
     void render(const QModelIndex &index);
-    void overlay(const QModelIndex &index);
     void enableOverlay(bool enable);
     void selectPixel(int x, int y);
+
+public:
+    void overlay(const QModelIndexList &images);
 
 private:
     QImage m_Image;
     struct {
         bool enabled = false;
-        int flags;
-        QPoint coord;
-        QImage image;
         QImage surface;
+        QModelIndexList images;
     } m_Overlay;
 
     void performOverlay();
+    void overlayOneImage(const QModelIndex& index);
 };
 
 #endif // PICTURERENDER_H
