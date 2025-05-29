@@ -2,7 +2,6 @@
 
 #include "models/image.h"
 
-#include <algorithm>
 #include <QColor>
 #include <QDebug>
 #include <QFile>
@@ -243,6 +242,7 @@ void PictureRender::overlay(const QModelIndex &index)
     file.read(buf, 4);
     quint16 x = *reinterpret_cast<quint16*>(&buf[0]);
     quint16 y = *reinterpret_cast<quint16*>(&buf[2]);
+    m_Overlay.flags = flags;
     m_Overlay.coord = QPoint(x, y);
     ReadImageFromFile(index, file, m_Overlay.image, m_Image.colorTable());
 
@@ -287,7 +287,8 @@ void PictureRender::performOverlay()
             const QPoint overlayPos = QPoint(x, y);
             const QPoint pos = m_Overlay.coord + overlayPos;
             int index = m_Overlay.image.pixelIndex(overlayPos);
-            index ^= m_Image.pixelIndex(pos);
+            if (m_Overlay.flags & model::Image::Flags::FlagXorIndex)
+                index ^= m_Image.pixelIndex(pos);
             m_Overlay.surface.setPixel(pos, index);
         }
     }

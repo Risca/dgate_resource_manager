@@ -28,6 +28,7 @@ private:
     QImage m_Image;
     struct {
         bool enabled = false;
+        int flags;
         QPoint coord;
         QImage image;
         QImage surface;

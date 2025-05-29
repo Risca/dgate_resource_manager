@@ -30,7 +30,8 @@ public:
 
     enum Flags {
         FlagCoordinates = (1 << 0),
-        FlagPalette     = (1 << 12)
+        FlagPalette     = (1 << 12),
+        FlagTransparent = (1 << 14),
     };
 
     // Header:
