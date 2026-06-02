@@ -6,8 +6,6 @@
 #include <QByteArray>
 #include <QObject>
 
-#include <inttypes.h>
-
 class QAudioOutput;
 class QModelIndex;
 
