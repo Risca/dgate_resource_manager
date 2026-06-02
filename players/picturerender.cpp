@@ -172,6 +172,10 @@ void PictureRender::render(const QModelIndex &index)
         // Image contain its own palette
         ReadPalette(index, colors);
     }
+    else if (index.parent().row() == 0) {
+        qDebug() << "using palette from image 36 (hard coded)";
+        ReadPalette(index.sibling(36, 0), colors);
+    }
     else {
         // Search backwards trying to find a palette from an other pic
         int paletteRow = -1;
