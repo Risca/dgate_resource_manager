@@ -76,6 +76,7 @@ Image::Image(QObject *parent)
     : QAbstractItemModel(parent)
 {
     TreeItem::ItemData headers;
+    headers[COLUMN_ID] = "Id";
     headers[COLUMN_OFFSET] = "Offset";
     headers[COLUMN_IMG_OFF] = "Image offset";
     headers[COLUMN_FLAGS] = "Flags";
@@ -219,6 +220,7 @@ void Image::processDirectory(const QString &dir)
 void Image::parse(QDataStream &stream, TreeItem *parent)
 {
     quint32 offset;
+    quint32 idx = 1;
 
     stream.setByteOrder(QDataStream::LittleEndian);
     stream >> offset;
@@ -235,6 +237,7 @@ void Image::parse(QDataStream &stream, TreeItem *parent)
         }
 
         TreeItem::ItemData itemData;
+        itemData[COLUMN_ID] = idx++;
         itemData[COLUMN_OFFSET] = offset;
         itemData[COLUMN_IMG_OFF] = imageOffset;
         itemData[COLUMN_FLAGS] = flags;

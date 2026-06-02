@@ -18,6 +18,7 @@ public:
     ~Image();
 
     enum {
+        COLUMN_ID,
         COLUMN_OFFSET,
         COLUMN_IMG_OFF,
         COLUMN_FLAGS,
